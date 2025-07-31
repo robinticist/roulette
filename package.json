@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/package",
   "name": "@robinticistjs/roulette",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "This is a roulette component for React and Next.js",
   "type": "module",
   "main": "dist/roulette.umd.js",
