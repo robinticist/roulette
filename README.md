@@ -15,6 +15,9 @@ npm install @robinticistjs/roulette
 yarn add @robinticistjs/roulette
 ```
 
+## Demo
+[Spin the roulette wheel](https://nk-space.net/en/portfolio/roulette)
+
 ## Features
 
 - 🎡 Animated spinning roulette wheel

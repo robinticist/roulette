@@ -59,5 +59,13 @@
     "tailwindcss": {
       "optional": true
     }
-  }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/robinticist/roulette.git"
+  },
+  "homepage": "https://github.com/robinticist/roulette#readme"
 }
