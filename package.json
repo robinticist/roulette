@@ -1,12 +1,21 @@
 {
   "$schema": "https://json.schemastore.org/package",
   "name": "@robinticistjs/roulette",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "This is a roulette component for React and Next.js",
   "type": "module",
-  "main": "dist/roulette.umd.js",
-  "module": "dist/roulette.es.js",
+  "main": "dist/index.umd.js",
+  "module": "dist/index.es.js",
   "types": "dist/index.d.ts",
+  "style": "dist/styles.css",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.es.js",
+      "require": "./dist/index.umd.js"
+    },
+    "./styles.css": "./dist/styles.css"
+  },
   "files": [
     "dist"
   ],
@@ -30,33 +39,26 @@
     "build:watch": "WATCH=true vite build --watch",
     "preview": "vite preview"
   },
-  "dependencies": {
-    "clsx": "^2.1.1",
-    "tailwind-merge": "^3.3.1"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@biomejs/biome": "^1.5.3",
     "@types/node": "^24.1.0",
     "@types/react": "^19.1.9",
     "@vitejs/plugin-react-swc": "^3.11.0",
+    "autoprefixer": "^10.4.21",
     "next": "^15.2.3",
     "react": "^19.0.0",
-    "tailwindcss": "^4.0.8",
     "terser": "^5.43.1",
     "typescript": "5.7.3",
     "vite": "^7.0.6",
     "vite-plugin-dts": "^4.5.4"
   },
   "peerDependencies": {
-    "next": "^15.2.3",
-    "react": "^19.0.0",
-    "tailwindcss": "^4.0.8"
+    "next": "^14.0.0",
+    "react": "^18.0.0 || ^19.0.0"
   },
   "peerDependenciesMeta": {
     "next": {
-      "optional": true
-    },
-    "tailwindcss": {
       "optional": true
     }
   },

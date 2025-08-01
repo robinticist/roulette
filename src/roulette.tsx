@@ -1,12 +1,6 @@
 'use client';
 
-import { clsx, type ClassValue } from 'clsx';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { twMerge } from 'tailwind-merge';
-
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
-}
 
 export interface RouletteProps {
   items: number[];
@@ -14,6 +8,21 @@ export interface RouletteProps {
   onSpinEnd?: (value: number) => void;
   disabled?: boolean;
   remainSecond?: number; // timestamp
+  // 크기 커스터마이징 옵션
+  width?: string; // 룰렛 너비
+  height?: string; // 룰렛 높이
+  // 색상 커스터마이징 옵션
+  outerBorderColor?: string; // 외부 테두리 색상
+  dotColor?: string; // 노란 점 색상
+  dotBorderColor?: string; // 노란 점 테두리 색상
+  markerColor?: string; // 화살표 마커 색상
+  buttonBorderColor?: string; // 중앙 버튼 테두리 색상
+  buttonBgColor?: string; // 중앙 버튼 배경 색상
+  buttonHoverBorderColor?: string; // 중앙 버튼 호버 테두리 색상
+  buttonHoverBgColor?: string; // 중앙 버튼 호버 배경 색상
+  buttonDisabledBgColor?: string; // 중앙 버튼 활성화 배경 색상
+  sectionColors?: [string, string]; // 섹션 배경 색상 [홀수 인덱스 색상, 짝수 인덱스 색상]
+  textColor?: string; // 텍스트 색상
 }
 
 export default function Roulette({
@@ -22,6 +31,21 @@ export default function Roulette({
   onSpinEnd,
   disabled = false,
   remainSecond = 0,
+  // 크기 커스터마이징 기본값
+  width = '330px',
+  height = '330px',
+  // 색상 커스터마이징 기본값
+  outerBorderColor = '#e12afb',
+  dotColor = '#ffdf20',
+  dotBorderColor = '#9ca3af',
+  markerColor = '#F44225',
+  buttonBorderColor = '#f87171',
+  buttonBgColor = '#ff4d4d',
+  buttonHoverBorderColor = '#ef4444',
+  buttonHoverBgColor = '#dc2626',
+  buttonDisabledBgColor = '#b91c1c',
+  sectionColors = ['#ffffff', '#e5e7eb'],
+  textColor = '#000000',
 }: RouletteProps) {
   const [isSpinning, setIsSpinning] = useState(false);
   const [rotation, setRotation] = useState(0);
@@ -137,11 +161,11 @@ export default function Roulette({
   }, [isSpinning, spinSpeed]);
 
   return (
-    <div className="relative w-[330px] h-[330px] mx-auto">
+    <div className="roulette-wrapper" style={{ width, height }}>
       {/* 룰렛 본체 */}
-      <div className="absolute w-full h-full">
+      <div className="roulette-body">
         <div
-          className="absolute w-full h-full"
+          className="roulette-wheel"
           style={{
             transform: `rotate(${rotation}deg)`,
             transition: 'transform 5s cubic-bezier(0.17, 0.67, 0.12, 0.99)',
@@ -161,15 +185,13 @@ export default function Roulette({
             const endY = 50 + 50 * Math.sin(endAngle);
 
             return (
-              <div key={index} className="absolute w-full h-full">
+              <div key={index} className="roulette-section">
                 {/* 섹션 배경 */}
                 <div
-                  className={cn(
-                    'absolute w-full h-full',
-                    index % 2 === 0 ? 'bg-white' : 'bg-gray-200',
-                    // rewardCredit === item && 'bg-accent-yellowgreen',
-                  )}
+                  className="roulette-section-bg"
                   style={{
+                    backgroundColor:
+                      index % 2 === 0 ? sectionColors[1] : sectionColors[0],
                     clipPath: `polygon(50% 50%, ${startX}% ${startY}%, ${endX}% ${endY}%)`,
                   }}
                 />
@@ -184,7 +206,7 @@ export default function Roulette({
             return (
               <div
                 key={`line-${index}`}
-                className="absolute bg-black"
+                className="roulette-divider"
                 style={{
                   width: '46%',
                   height: '1px',
@@ -192,6 +214,7 @@ export default function Roulette({
                   left: '50%',
                   top: '50%',
                   transformOrigin: '0 50%',
+                  backgroundColor: 'black',
                 }}
               />
             );
@@ -210,7 +233,7 @@ export default function Roulette({
             return (
               <div
                 key={`label-${index}`}
-                className="absolute whitespace-nowrap text-center z-10"
+                className="roulette-label"
                 style={{
                   transform: `translate(-50%, -50%) rotate(${textRotate}deg)`,
                   left: `${x}%`,
@@ -218,13 +241,16 @@ export default function Roulette({
                 }}
               >
                 <div
-                  className="flex items-center gap-1"
+                  className="roulette-label-content"
                   style={{
                     transform: `rotate(90deg)`,
                     transformOrigin: 'center',
                   }}
                 >
-                  <span className="body-04 text-black">
+                  <span
+                    className="roulette-label-text"
+                    style={{ color: textColor }}
+                  >
                     <b>{item}</b>
                   </span>
                 </div>
@@ -235,28 +261,56 @@ export default function Roulette({
 
         {/* 중앙 원형 영역 */}
         <div
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 
-                      w-24 h-24 rounded-full bg-grayscale-200 border-2 border-black
-                      flex items-center justify-center"
+          className="roulette-center"
+          style={{
+            backgroundColor: sectionColors[1],
+            border: '2px solid black',
+          }}
         >
-          <div className="w-full h-full rounded-full flex items-center justify-center">
+          <div className="roulette-center-inner">
             {/* 중앙 버튼 */}
             <button
               onClick={spin}
               disabled={disabled}
-              className={cn(
-                'w-full h-full rounded-full flex flex-col items-center justify-center text-white font-bold text-xl leading-tight disabled:bg-grayscale-400 disabled:cursor-not-allowed disabled:border-grayscale-400 border-8 border-red-400 bg-[#ff4d4d] hover:border-red-500 hover:bg-red-600 active:bg-red-700 transition-colors',
-                {
-                  'bg-red-700 cursor-not-allowed': isSpinning,
-                },
-              )}
+              className="roulette-button"
+              style={{
+                borderColor: buttonBorderColor,
+                backgroundColor: isSpinning
+                  ? buttonDisabledBgColor
+                  : buttonBgColor,
+                cursor: isSpinning || disabled ? 'not-allowed' : 'pointer',
+              }}
+              onMouseOver={(e) => {
+                if (!isSpinning && !disabled) {
+                  e.currentTarget.style.borderColor = buttonHoverBorderColor;
+                  e.currentTarget.style.backgroundColor = buttonHoverBgColor;
+                }
+              }}
+              onFocus={(e) => {
+                if (!isSpinning && !disabled) {
+                  e.currentTarget.style.borderColor = buttonHoverBorderColor;
+                  e.currentTarget.style.backgroundColor = buttonHoverBgColor;
+                }
+              }}
+              onMouseOut={(e) => {
+                if (!isSpinning && !disabled) {
+                  e.currentTarget.style.borderColor = buttonBorderColor;
+                  e.currentTarget.style.backgroundColor = buttonBgColor;
+                }
+              }}
+              onBlur={(e) => {
+                if (!isSpinning && !disabled) {
+                  e.currentTarget.style.borderColor = buttonBorderColor;
+                  e.currentTarget.style.backgroundColor = buttonBgColor;
+                }
+              }}
             >
               {disabled ? (
-                <span className="button-01-m laptop:button-02">
+                <span className="roulette-button-text">
                   <strong>{Math.ceil(remainSecond / 3600)}</strong>
                 </span>
               ) : (
-                <span className="text-primary">Start</span>
+                <span className="roulette-button-text">Start</span>
               )}
             </button>
           </div>
@@ -264,14 +318,17 @@ export default function Roulette({
       </div>
 
       {/* 외부 테두리 */}
-      <div className="absolute w-full h-full pointer-events-none">
-        <div className="absolute w-full h-full rounded-full border-[1px] border-black">
-          <div className="absolute w-full h-full rounded-full border-[24px] border-fuchsia-500" />
+      <div className="roulette-outer-border">
+        <div className="roulette-border">
+          <div
+            className="roulette-border-thick"
+            style={{ borderColor: outerBorderColor }}
+          />
         </div>
 
         {/* 노란 점들 */}
         <div
-          className="absolute w-full h-full"
+          className="roulette-dots"
           style={{
             transform: `rotate(${rotation}deg)`,
             transition: 'transform 5s cubic-bezier(0.17, 0.67, 0.12, 0.99)',
@@ -288,11 +345,17 @@ export default function Roulette({
             return (
               <div
                 key={`dot-${index}`}
-                className="absolute w-3 h-3 rounded-full bg-yellow-300 border-grayscale-400 border-2"
+                className="roulette-dot"
                 style={{
+                  backgroundColor: dotColor,
                   left: `${x}%`,
                   top: `${y}%`,
                   transform: 'translate(-50%, -50%)',
+                  width: '8px',
+                  height: '8px',
+                  borderRadius: '50%',
+                  border: '2px solid',
+                  borderColor: dotBorderColor,
                 }}
               />
             );
@@ -301,15 +364,12 @@ export default function Roulette({
       </div>
 
       {/* 빨간 화살표 마커 */}
-      <div className="absolute -top-2 left-1/2 -translate-x-1/2 z-[11]">
-        <div className="relative w-9 h-9 laptop:w-11 laptop:h-11">
+      <div className="roulette-marker-container">
+        <div className="roulette-marker-wrapper">
           <div
             ref={markerRef}
+            className="roulette-marker"
             style={{
-              position: 'absolute',
-              width: '100%',
-              height: '100%',
-              transformOrigin: 'center',
               transform: `rotate(${markerRotation}deg)`,
               transition: isSpinning ? 'none' : 'transform 0.3s ease-out',
               animation: isSpinning
@@ -317,30 +377,21 @@ export default function Roulette({
                 : 'none',
             }}
           >
-            <div
-              className="absolute"
-              style={{
-                left: '50%',
-                top: '-52%',
-                transform: 'translateX(-50%)',
-              }}
-            >
+            <div className="roulette-marker-svg-container">
               <svg
                 width="60"
                 height="100"
                 viewBox="0 0 60 100"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
-                style={{
-                  width: '40px',
-                }}
+                className="roulette-marker-svg"
               >
                 <title>Roulette Marker</title>
                 <path
                   fillRule="evenodd"
                   clipRule="evenodd"
                   d="M50.6896 51.7243C56.4254 46.26 60 38.5474 60 30C60 13.4315 46.5685 0 30 0C13.4315 0 0 13.4315 0 30C0 38.5474 3.57459 46.26 9.3104 51.7243L30 100L50.6896 51.7243Z"
-                  fill="#F44225"
+                  fill={markerColor}
                 />
                 <path
                   fillRule="evenodd"
@@ -352,8 +403,8 @@ export default function Roulette({
                   cx="30"
                   cy="30"
                   r="6"
-                  fill="#ffe021"
-                  stroke="#ffe021"
+                  fill={dotColor}
+                  stroke={dotBorderColor}
                   strokeWidth="2"
                 />
               </svg>
